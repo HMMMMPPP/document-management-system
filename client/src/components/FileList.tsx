@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getFileVersions } from '../services/api';
+import { FileText, Download } from 'lucide-react';
 
 interface Version {
     Key: string;
@@ -28,27 +29,59 @@ const FileList: React.FC<FileListProps> = ({ refreshTrigger }) => {
     }, [refreshTrigger]);
 
     return (
-        <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">File Versions</h2>
+        <div className="mt-0">
             {versions.length === 0 ? (
-                <p className="text-gray-500">No files uploaded yet.</p>
+                <div className="p-12 text-center">
+                    <div className="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <FileText className="w-8 h-8 text-gray-300" />
+                    </div>
+                    <p className="text-gray-500 font-medium">No files uploaded yet.</p>
+                </div>
             ) : (
-                <ul className="space-y-4">
-                    {versions.map((v) => (
-                        <li key={v.VersionId} className="p-4 bg-white shadow-sm rounded-lg border border-gray-200">
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <div className="font-semibold text-lg text-gray-900">{v.Key}</div>
-                                    <div className="text-xs text-gray-500 mt-1 font-mono">ID: {v.VersionId}</div>
-                                </div>
-                                <div className="text-right text-sm text-gray-600">
-                                    <div>{new Date(v.LastModified).toLocaleString()}</div>
-                                    <div>{(v.Size / 1024).toFixed(2)} KB</div>
-                                </div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="bg-gray-50/50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                                <th className="px-6 py-4">File Name</th>
+                                <th className="px-6 py-4">Size</th>
+                                <th className="px-6 py-4">Uploaded</th>
+                                <th className="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-50">
+                            {versions.map((v) => (
+                                <tr key={v.VersionId} className="hover:bg-blue-50/30 transition-colors group">
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center space-x-3">
+                                            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors">
+                                                <FileText size={20} />
+                                            </div>
+                                            <div>
+                                                <div className="font-semibold text-gray-800 group-hover:text-blue-700 transition-colors">{v.Key}</div>
+                                                <div className="text-xs text-gray-400 font-mono hidden md:block" title={v.VersionId}>
+                                                    ID: {v.VersionId.substring(0, 8)}...
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-600 font-medium">
+                                        {(v.Size / 1024).toFixed(2)} KB
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-500">
+                                        {new Date(v.LastModified).toLocaleDateString()}
+                                        <span className="block text-xs text-gray-400">{new Date(v.LastModified).toLocaleTimeString()}</span>
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        <button className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center space-x-1">
+                                            <span>Download</span>
+                                            <Download size={14} />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );

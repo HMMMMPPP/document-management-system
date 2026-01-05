@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { UploadCloud } from 'lucide-react';
 import { getUploadUrl, uploadFileToS3 } from '../services/api';
 
 interface UploadProps {
@@ -22,12 +23,22 @@ const Upload: React.FC<UploadProps> = ({ onUploadSuccess }) => {
     }, [onUploadSuccess]);
 
     return (
-        <div className="p-8 border-2 border-dashed border-gray-400 rounded-lg text-center bg-white hover:bg-gray-50 transition-colors">
-            <input type="file" onChange={handleFileChange} className="hidden" id="file-upload" />
-            <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center">
-                <span className="text-lg font-medium text-gray-700">Drop files here or click to upload</span>
-                <span className="text-sm text-gray-500 mt-2">Supports all file types</span>
-            </label>
+        <div className="group relative">
+            <input
+                type="file"
+                onChange={handleFileChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                id="file-upload"
+            />
+            <div className="p-10 border-2 border-dashed border-blue-200 rounded-xl text-center bg-blue-50/30 group-hover:bg-blue-50/80 group-hover:border-blue-400 transition-all duration-300">
+                <div className="bg-white p-4 rounded-full shadow-sm w-16 h-16 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <UploadCloud className="w-8 h-8 text-blue-500" />
+                </div>
+                <label htmlFor="file-upload" className="block cursor-pointer">
+                    <span className="block text-lg font-semibold text-gray-700 mb-1 group-hover:text-blue-600 transition-colors">Click to upload</span>
+                    <span className="block text-sm text-gray-500">or drag and drop</span>
+                </label>
+            </div>
         </div>
     );
 };
