@@ -1,14 +1,17 @@
 import { Router } from 'express';
 import { generateUploadUrl, listFileVersions } from '../services/s3';
+import { authenticate } from '../middleware/auth';
+import { validate, uploadUrlSchema, listVersionsSchema } from '../middleware/validation';
 
 const router = Router();
 
-router.post('/upload-url', async (req, res) => {
+// Apply authentication to all routes
+router.use(authenticate);
+
+router.post('/upload-url', validate(uploadUrlSchema), async (req, res) => {
     try {
         const { fileName, contentType } = req.body;
-        if (!fileName || !contentType) {
-            return res.status(400).json({ error: 'Missing fileName or contentType' });
-        }
+        // Validation handled by middleware, so we can assume valid input here or just keep it robust
         const url = await generateUploadUrl(fileName, contentType);
         res.json({ url });
     } catch (error) {
@@ -17,7 +20,7 @@ router.post('/upload-url', async (req, res) => {
     }
 });
 
-router.get('/versions', async (req, res) => {
+router.get('/versions', validate(listVersionsSchema), async (req, res) => {
     try {
         const { prefix } = req.query;
         const versions = await listFileVersions(prefix as string);
